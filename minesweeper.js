@@ -1,10 +1,20 @@
-var game = {
+(function() {
+    var game = {};
+
+    // global on the server, window in the browser
+    var root, previous_game;
+
+    root = this;
+    if (root != null) {
+      previous_game = root.game;
+    }
+
     // GAME PROPERTIES
-    bomb: 'b',
-    hidden: 'h',
+    game.bomb = 'b';
+    game.hidden = 'h';
     
     // MATRIX OPERATIONS
-    createMatrix: function(w, h, initValue) {
+    game.createMatrix = function(w, h, initValue) {
         if(initValue == undefined) {
             initValue = 0;
         }
@@ -16,15 +26,15 @@ var game = {
             }
         }
         return matrix;
-    },
-    verifyInsideMatrix: function(matrix, x, y) {
+    };
+    game.verifyInsideMatrix = function(matrix, x, y) {
         if(x >=0 && x <= matrix.length-1
             && y >= 0 && y <= matrix[0].length-1) {
             return true;
         }
         return false;
-    },
-    verifySpaceAround: function(matrix, x, y) {
+    };
+    game.verifySpaceAround = function(matrix, x, y) {
         if( this.verifySpaceAbove(matrix, y)  
             && this.verifySpaceBelow(matrix, y) 
             && this.verifySpaceRight(matrix, x) 
@@ -33,42 +43,42 @@ var game = {
             return true;
         }
         return false;
-    },
-    putBomb: function(matrix, x, y) {
+    };
+    game.putBomb = function(matrix, x, y) {
         if(this.verifyInsideMatrix(matrix, x, y)) {
             matrix[x][y] = this.bomb;
         }
         return matrix;
-    },
-    verifySpaceAbove: function(matrix, y) {
+    };
+    game.verifySpaceAbove = function(matrix, y) {
         if(y > 0) {
             return true;
         }
         return false;
-    },
-    verifySpaceBelow: function(matrix, y) {
+    };
+    game.verifySpaceBelow = function(matrix, y) {
         if(matrix[0] != undefined &&
             y < matrix[0].length-1) {
             return true;
         }
         return false;
-    },
-    verifySpaceRight: function(matrix, x) {
+    };
+    game.verifySpaceRight = function(matrix, x) {
         if(x < matrix.length-1) {
             return true;
         }
         return false;
-    },
-    verifySpaceLeft: function(matrix, x, y) {
+    };
+    game.verifySpaceLeft = function(matrix, x, y) {
         if(x > 0) {
             return true;
         }
         return false;
-    },
-    checkBomb: function(tile) {
+    };
+    game.checkBomb = function(tile) {
         return tile == this.bomb;
-    },
-    bombCounter: function(matrix, x, y) {
+    };
+    game.bombCounter = function(matrix, x, y) {
         if(this.verifySpaceAbove(matrix, y)
             && !this.checkBomb(matrix[x][y-1])
             ) {
@@ -123,8 +133,8 @@ var game = {
             matrix[x+1][y+1]++;
         }
         return matrix;
-    },
-    putRandomBombs: function(matrix, n) {
+    };
+    game.putRandomBombs = function(matrix, n) {
         var bombsLeft = n;
         while(bombsLeft > 0) {
             result = this.putRandomBomb(matrix, bombsLeft);
@@ -132,10 +142,10 @@ var game = {
             matrix = result.matrix;
         }
         return matrix;
-    },
+    };
     // This function will return how many bombs are left 
     // and the modified matrix
-    putRandomBomb: function(matrix, nBombs) {
+    game.putRandomBomb = function(matrix, nBombs) {
         // Generate random cordinates
         var rX = parseInt(Math.random()*matrix.length);
         var rY = parseInt(Math.random()*matrix[0].length);
@@ -150,10 +160,10 @@ var game = {
         } else {
             return this.putRandomBomb(matrix, nBombs);
         }
-    },
+    };
     
     // GAME OPERATIONS
-    openTile: function(matrix, rMatrix, x, y) {
+    game.openTile = function(matrix, rMatrix, x, y) {
         if(this.verifyInsideMatrix(matrix, x, y)
             && rMatrix[x][y] == game.hidden) {
             // Reveal tile
@@ -167,8 +177,8 @@ var game = {
 
         } 
         return rMatrix;
-    },
-    openTilesAround: function(matrix, rMatrix, x, y) {
+    };
+    game.openTilesAround = function(matrix, rMatrix, x, y) {
         // Open above
         rMatrix = this.openTile(matrix, rMatrix, x, y-1);
         // Open below
@@ -186,6 +196,20 @@ var game = {
         // Open below and right
         rMatrix = this.openTile(matrix, rMatrix, x+1, y+1);
         return rMatrix;
+    };
+
+    // AMD / RequireJS
+    if (typeof define !== 'undefined' && define.amd) {
+        define([], function () {
+            return async;
+        });
     }
-}
-module.exports = game;
+    // Node.js
+    else if (typeof module !== 'undefined' && module.exports) {
+        module.exports = game;
+    }
+    // included directly via <script> tag
+    else {
+        root.game = game;
+    }
+}());
