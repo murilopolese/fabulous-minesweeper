@@ -170,21 +170,44 @@ describe('Game Operations', function() {
         } else {
             done(new Error('Hidden matrix is not working.'));
         }
-    })
+    });
 
     it('Open tile', function(done) {
-        var matrix = game.createMatrix(5, 5);
+        var matrix = game.createMatrix(3, 3);
         matrix = game.putBomb(matrix, 1, 1);
         matrix = game.bombCounter(matrix, 1, 1);
+        
         var rMatrix = game.createMatrix(5, 5, game.hidden);
         rMatrix = game.openTile(matrix, rMatrix, 0, 0);
         rMatrix = game.openTile(matrix, rMatrix, 1, 1);
+        
         if( rMatrix[0][0] == 1
             && rMatrix[1][1] == game.bomb
             && rMatrix[0][2] == game.hidden) {
             done();
         } else {
             done(new Error('Open tile is not working.'));
+        }
+    });
+
+    it('Recursive open tiles around', function(done) {
+        var matrix = game.createMatrix(4, 4);
+        matrix = game.putBomb(matrix, 1, 1);
+        matrix = game.bombCounter(matrix, 1, 1);
+        
+        var rMatrix = game.createMatrix(4, 4, game.hidden);
+        rMatrix = game.openTile(matrix, rMatrix, 3, 0);
+        if( rMatrix[3][0] == 0
+            && rMatrix[3][1] == 0
+            && rMatrix[3][2] == 0
+            && rMatrix[3][3] == 0
+            && rMatrix[0][3] == 0
+            && rMatrix[1][3] == 0
+            && rMatrix[2][3] == 0
+            ) {
+            done();
+        } else {
+            done(new Error('Recursive open tiles is not working.'));
         }
     })
 

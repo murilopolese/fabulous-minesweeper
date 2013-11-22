@@ -1,7 +1,7 @@
 var game = {
     // GAME PROPERTIES
-    bomb: 'bomb',
-    hidden: 'hidden',
+    bomb: 'b',
+    hidden: 'h',
     
     // MATRIX OPERATIONS
     createMatrix: function(w, h, initValue) {
@@ -154,14 +154,25 @@ var game = {
     
     // GAME OPERATIONS
     openTile: function(matrix, rMatrix, x, y) {
-        if(this.verifyInsideMatrix(matrix, x, y)) {
+        if(this.verifyInsideMatrix(matrix, x, y)
+            && rMatrix[x][y] == game.hidden) {
+            // Reveal tile
             rMatrix[x][y] = matrix[x][y];
-        }
+            // If is not 0, just reveal it
+            if(matrix[x][y] != 0) {
+                return rMatrix;
+            } else {
+                return this.openTilesAround(matrix, rMatrix, x, y);
+            }
+
+        } 
         return rMatrix;
     },
-    openTileAround: function(matrix, rMatrix, x, y) {
+    openTilesAround: function(matrix, rMatrix, x, y) {
         // Open above
         rMatrix = this.openTile(matrix, rMatrix, x, y-1);
+        // Open below
+        rMatrix = this.openTile(matrix, rMatrix, x, y+1);
         // Open above and left
         rMatrix = this.openTile(matrix, rMatrix, x-1, y-1);
         // Open above and right
@@ -170,8 +181,6 @@ var game = {
         rMatrix = this.openTile(matrix, rMatrix, x-1, y);
         // Open right
         rMatrix = this.openTile(matrix, rMatrix, x+1, y);
-        // Open below
-        rMatrix = this.openTile(matrix, rMatrix, x, y+1);
         // Open below and left
         rMatrix = this.openTile(matrix, rMatrix, x-1, y+1);
         // Open below and right
