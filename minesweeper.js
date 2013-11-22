@@ -198,6 +198,21 @@
         return rMatrix;
     };
 
+    game.checkWin = function(matrix, rMatrix) {
+        for(var x = 0; x < matrix.length; x++) {
+            for(var y = 0; y < matrix[0].length; y++) {
+                if(rMatrix[x][y] == this.bomb) {
+                    return false;
+                }
+                if(rMatrix[x][y] == this.hidden
+                    && matrix[x][y] != this.bomb) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     // AMD / RequireJS
     if (typeof define !== 'undefined' && define.amd) {
         define([], function () {

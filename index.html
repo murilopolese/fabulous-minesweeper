@@ -10,6 +10,10 @@
         <link href="minesweeper.css" rel="stylesheet" />
     </head>
     <body>
+        <div class="tile">
+            <div class="tile10 open" onclick="newGame();">N</div>
+            <div id="checkWin" class="tile10 open" onclick="checkWin(matrix, rMatrix);">:|</div>
+        </div>
         <div id="game"></div>
         <script type="text/javascript" src="jquery.min.js"></script>
         <script type="text/javascript" src="minesweeper.js"></script>
