@@ -209,6 +209,27 @@ describe('Game Operations', function() {
         } else {
             done(new Error('Recursive open tiles is not working.'));
         }
+    });
+
+    it('Check win', function(done) {
+        var matrix = game.createMatrix(6, 6);
+        matrix = game.putBomb(matrix, 2, 2);
+        matrix = game.bombCounter(matrix, 2, 2);
+
+        var rMatrix = game.createMatrix(6, 6, game.hidden);
+        rMatrix = game.openTile(matrix, rMatrix, 0, 0);
+        var win = game.checkWin(matrix, rMatrix);
+        
+        var rMatrix2 = game.createMatrix(6, 6, game.hidden);
+        rMatrix = game.openTile(matrix, rMatrix2, 1, 1);
+        var win2 = game.checkWin(matrix, rMatrix2);
+
+        if(win && !win2) {
+            done();
+        } else {
+            done(new Error('Check win is not working,'))
+        }
+
     })
 
 })
