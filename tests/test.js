@@ -69,7 +69,9 @@ describe('Matrix operations', function() {
         if(matrix[1][1] == game.bomb) {
             done();
         } else {
-            done(new Error('Bomb hasn\'t been planted. Counter terrorists win.'));
+            done(
+                new Error('Bomb hasn\'t been planted. Counter terrorists win.')
+            );
         }
     });
     
@@ -81,13 +83,38 @@ describe('Matrix operations', function() {
             // Check above
             matrix[0][0] == 1 && matrix[1][0] == 1 && matrix[2][0] == 1
             // check right and left
-            && matrix[0][1] == 1 && matrix[2][1]
+            && matrix[0][1] == 1 && matrix[2][1] == 1
             // check below
             && matrix[0][2] == 1 && matrix[1][2] == 1 && matrix[2][2] == 1
         ) {
             done();
         } else {
-            done(new Error('Counter is wrong.'));
+            done(new Error('Counter for one bomb is wrong.'));
+        }
+    });
+
+    it('add bomb counter around for two bombs', function(done) {
+        var matrix = game.createMatrix(4, 3);
+        matrix = game.putBomb(matrix, 1, 1);
+        matrix = game.putBomb(matrix, 2, 1);
+        matrix = game.bombCounter(matrix, 1, 1);
+        matrix = game.bombCounter(matrix, 2, 1);
+        if(
+            // Check above
+            matrix[0][0] == 1 && matrix[1][0] == 2 
+            && matrix[2][0] == 2 && matrix[3][0] == 1
+            // check right and left
+            && matrix[0][1] == 1 && matrix[3][1] == 1
+            // check below
+            && matrix[0][2] == 1 && matrix[1][2] == 2 
+            && matrix[2][2] == 2 && matrix[3][2] == 1
+            // check if bombs still bombs
+            && matrix[1][1] == game.bomb && matrix[2][1] == game.bomb
+
+        ) {
+            done();
+        } else {
+            done(new Error('Counter for two bombs is wrong.'));
         }
     })
 })

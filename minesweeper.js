@@ -51,24 +51,61 @@ var game = {
         }
         return false;
     },
+    checkBomb: function(tile) {
+        return tile == this.bomb;
+    },
     bombCounter: function(matrix, x, y) {
-        if(this.verifySpaceAbove(matrix, y)) {
-            matrix[x-1][y-1]++;
+        if(this.verifySpaceAbove(matrix, y)
+            && !this.checkBomb(matrix[x][y-1])
+            ) {
+            // Add countar above
             matrix[x][y-1]++;
-            matrix[x+1][y-1]++;
         }
-        if(this.verifySpaceLeft(matrix, x)) {
+        if(this.verifySpaceLeft(matrix, x)
+            && !this.checkBomb(matrix[x-1][y]) 
+            ) {
             // Add counter left
             matrix[x-1][y]++;
         }
-        if(this.verifySpaceRight(matrix, x)) {
+        if(this.verifySpaceRight(matrix, x)
+            && !this.checkBomb(matrix[x+1][y])
+            ) {
             // Add counter right
             matrix[x+1][y]++;
         }
-        if(this.verifySpaceBelow(matrix, y)) {
+        if(this.verifySpaceBelow(matrix, y)
+            && !this.checkBomb(matrix[x][y+1])
+            ) {
             // Add counter below
-            matrix[x-1][y+1]++;
             matrix[x][y+1]++;
+        }
+        if(this.verifySpaceAbove(matrix, y)
+            && this.verifySpaceLeft(matrix, x)
+            && !this.checkBomb(matrix[x-1][y-1])
+            ) {
+            // Add countar above and left
+            matrix[x-1][y-1]++;
+        }
+        if(this.verifySpaceAbove(matrix, y)
+            && this.verifySpaceRight(matrix, x)
+            && !this.checkBomb(matrix[x+1][y-1])
+            ) {
+            // Add countar above and right
+            matrix[x+1][y-1]++;
+        }
+        if(this.verifySpaceBelow(matrix, y)
+            && this.verifySpaceLeft(matrix, x)
+            && !this.checkBomb(matrix[x-1][y+1])
+            ) {
+            // Add countar below and left
+            matrix[x-1][y+1]++;
+        }
+
+        if(this.verifySpaceBelow(matrix, y)
+            && this.verifySpaceRight(matrix, x)
+            && !this.checkBomb(matrix[x+1][y+1])
+            ) {
+            // Add countar below and right
             matrix[x+1][y+1]++;
         }
         return matrix;
