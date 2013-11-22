@@ -137,4 +137,26 @@ describe('Matrix operations', function() {
             done(new Error('Counter for two bombs is wrong.'));
         }
     })
+
+    it('put 10 random bombs', function(done) {
+        var w = 5; // matrix width
+        var h = 5; // matrix height
+        var bombs = 10; // How many bombs
+        var nBombs = 0; // Bomb counter
+
+        var matrix = game.createMatrix(w, h);
+        matrix = game.putRandomBombs(matrix, bombs);
+        for(var x = 0; x < w; x++) {
+            for(var y = 0; y < h; y++) {
+                if(matrix[x][y] == game.bomb) {
+                    nBombs++;
+                }
+            }
+        }
+        if(nBombs == bombs) {
+            done();
+        } else {
+            done(new Error('putRandomBombs is not working.'));
+        }
+    })
 })

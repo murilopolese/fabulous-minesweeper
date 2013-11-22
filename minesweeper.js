@@ -10,6 +10,13 @@ var game = {
         }
         return matrix;
     },
+    verifyInsideMatrix: function(matrix, x, y) {
+        if(x >=0 && x <= matrix.length-1
+            && y >= 0 && y <= matrix[0].length-1) {
+            return true;
+        }
+        return false;
+    },
     verifySpaceAround: function(matrix, x, y) {
         if( this.verifySpaceAbove(matrix, y)  
             && this.verifySpaceBelow(matrix, y) 
@@ -21,7 +28,7 @@ var game = {
         return false;
     },
     putBomb: function(matrix, x, y) {
-        if(matrix[x] != undefined && matrix[x][y] != undefined) {
+        if(this.verifyInsideMatrix(matrix, x, y)) {
             matrix[x][y] = this.bomb;
         }
         return matrix;
@@ -109,6 +116,32 @@ var game = {
             matrix[x+1][y+1]++;
         }
         return matrix;
+    },
+    putRandomBombs: function(matrix, n) {
+        var bombsLeft = n;
+        while(bombsLeft > 0) {
+            result = this.putRandomBomb(matrix, bombsLeft);
+            bombsLeft = result.bombsLeft;
+            matrix = result.matrix;
+        }
+        return matrix;
+    },
+    // This function will return how many bombs are left and the modified matrix
+    putRandomBomb: function(matrix, nBombs) {
+        // Generate random cordinates
+        var rX = parseInt(Math.random()*matrix.length);
+        var rY = parseInt(Math.random()*matrix[0].length);
+        if(!this.checkBomb(matrix[rX][rY])) {
+            matrix = this.putBomb(matrix, rX, rY);
+            matrix = this.bombCounter(matrix, rX, rY);
+            nBombs--;
+            return {
+                bombsLeft: nBombs, 
+                matrix: matrix
+            };
+        } else {
+            return this.putRandomBomb(matrix, nBombs);
+        }
     }
 
 }
