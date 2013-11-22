@@ -21,7 +21,7 @@ var game = {
         return false;
     },
     putBomb: function(matrix, x, y) {
-        if(this.verifySpaceAround(matrix, x, y)) {
+        if(matrix[x] != undefined && matrix[x][y] != undefined) {
             matrix[x][y] = this.bomb;
         }
         return matrix;

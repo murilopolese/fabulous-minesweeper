@@ -1,6 +1,7 @@
 var game = require('../minesweeper.js');
 
 describe('Matrix operations', function() {
+
     it('create', function(done) {
         var matrix = game.createMatrix(4, 3);
         if(matrix.length == 4 && matrix[0].length == 3) {
@@ -9,6 +10,7 @@ describe('Matrix operations', function() {
             done(new Error('Matrix with wrong dimensions.'));
         }
     });
+
     it('check if there is space above', function(done) {
         var matrix = game.createMatrix(3, 3);
         if(game.verifySpaceAbove(matrix, 1) &&
@@ -45,6 +47,7 @@ describe('Matrix operations', function() {
             done('Space left verification is wrong.');
         }
     });
+
     it('check space around', function(done) {
         var matrix = game.createMatrix(3, 3);
         if(  game.verifySpaceAround(matrix, 1, 1) 
@@ -75,7 +78,7 @@ describe('Matrix operations', function() {
         }
     });
     
-    it('add bomb counter around for one bomb', function(done) {
+    it('bomb counter around for one bomb', function(done) {
         var matrix = game.createMatrix(4, 4);
         matrix = game.putBomb(matrix, 1, 1);
         matrix = game.bombCounter(matrix, 1, 1);
@@ -93,7 +96,7 @@ describe('Matrix operations', function() {
         }
     });
 
-    it('add bomb counter around for two bombs', function(done) {
+    it('bomb counter around for two bombs', function(done) {
         var matrix = game.createMatrix(4, 3);
         matrix = game.putBomb(matrix, 1, 1);
         matrix = game.putBomb(matrix, 2, 1);
@@ -110,6 +113,23 @@ describe('Matrix operations', function() {
             && matrix[2][2] == 2 && matrix[3][2] == 1
             // check if bombs still bombs
             && matrix[1][1] == game.bomb && matrix[2][1] == game.bomb
+
+        ) {
+            done();
+        } else {
+            done(new Error('Counter for two bombs is wrong.'));
+        }
+    });
+
+    it('bomb counter for bomb in the corner', function(done) {
+        var matrix = game.createMatrix(2, 2);
+        matrix = game.putBomb(matrix, 0, 0);
+        matrix = game.bombCounter(matrix, 0, 0);
+        if(
+            // check right and left
+            matrix[1][0] == 1
+            // check below
+            && matrix[0][1] == 1 && matrix[1][1] == 1
 
         ) {
             done();
