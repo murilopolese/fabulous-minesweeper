@@ -1,11 +1,18 @@
 var game = {
+    // GAME PROPERTIES
     bomb: 'bomb',
-    createMatrix: function(w, h) {
+    hidden: 'hidden',
+    
+    // MATRIX OPERATIONS
+    createMatrix: function(w, h, initValue) {
+        if(initValue == undefined) {
+            initValue = 0;
+        }
         var matrix = new Array(w);
         for(var x = 0; x < w; x++) {
             matrix[x] = new Array(h);
             for(var y = 0; y < h; y++) {
-                matrix[x][y] = 0;
+                matrix[x][y] = initValue;
             }
         }
         return matrix;
@@ -126,7 +133,8 @@ var game = {
         }
         return matrix;
     },
-    // This function will return how many bombs are left and the modified matrix
+    // This function will return how many bombs are left 
+    // and the modified matrix
     putRandomBomb: function(matrix, nBombs) {
         // Generate random cordinates
         var rX = parseInt(Math.random()*matrix.length);
@@ -142,7 +150,33 @@ var game = {
         } else {
             return this.putRandomBomb(matrix, nBombs);
         }
+    },
+    
+    // GAME OPERATIONS
+    openTile: function(matrix, rMatrix, x, y) {
+        if(this.verifyInsideMatrix(matrix, x, y)) {
+            rMatrix[x][y] = matrix[x][y];
+        }
+        return rMatrix;
+    },
+    openTileAround: function(matrix, rMatrix, x, y) {
+        // Open above
+        rMatrix = this.openTile(matrix, rMatrix, x, y-1);
+        // Open above and left
+        rMatrix = this.openTile(matrix, rMatrix, x-1, y-1);
+        // Open above and right
+        rMatrix = this.openTile(matrix, rMatrix, x+1, y-1);
+        // Open left
+        rMatrix = this.openTile(matrix, rMatrix, x-1, y);
+        // Open right
+        rMatrix = this.openTile(matrix, rMatrix, x+1, y);
+        // Open below
+        rMatrix = this.openTile(matrix, rMatrix, x, y+1);
+        // Open below and left
+        rMatrix = this.openTile(matrix, rMatrix, x-1, y+1);
+        // Open below and right
+        rMatrix = this.openTile(matrix, rMatrix, x+1, y+1);
+        return rMatrix;
     }
-
 }
 module.exports = game;

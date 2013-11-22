@@ -64,7 +64,7 @@ describe('Matrix operations', function() {
         } else {
             done(new Error('Space around verification is wrong.'));
         }
-    })
+    });
 
     it('put bomb', function(done) {
         var matrix = game.createMatrix(4, 3);
@@ -136,7 +136,7 @@ describe('Matrix operations', function() {
         } else {
             done(new Error('Counter for two bombs is wrong.'));
         }
-    })
+    });
 
     it('put 10 random bombs', function(done) {
         var w = 5; // matrix width
@@ -158,5 +158,34 @@ describe('Matrix operations', function() {
         } else {
             done(new Error('putRandomBombs is not working.'));
         }
+    });
+});
+
+describe('Game Operations', function() {
+
+    it('Create game matrix', function(done) {
+        var rMatrix = game.createMatrix(2, 2, game.hidden);
+        if(rMatrix[0][0] == game.hidden) {
+            done();
+        } else {
+            done(new Error('Hidden matrix is not working.'));
+        }
     })
+
+    it('Open tile', function(done) {
+        var matrix = game.createMatrix(5, 5);
+        matrix = game.putBomb(matrix, 1, 1);
+        matrix = game.bombCounter(matrix, 1, 1);
+        var rMatrix = game.createMatrix(5, 5, game.hidden);
+        rMatrix = game.openTile(matrix, rMatrix, 0, 0);
+        rMatrix = game.openTile(matrix, rMatrix, 1, 1);
+        if( rMatrix[0][0] == 1
+            && rMatrix[1][1] == game.bomb
+            && rMatrix[0][2] == game.hidden) {
+            done();
+        } else {
+            done(new Error('Open tile is not working.'));
+        }
+    })
+
 })
