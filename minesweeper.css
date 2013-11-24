@@ -1,18 +1,32 @@
+html, body, #game {
+    width: 100%;
+    height: 100%;
+}
+#game, #ui {
+    clear: both;
+    max-width: 500px;
+    max-height: 500px;
+}
+
 #game {
-    float: left;
-    width: 500px;
-    height: 500px;
     background: #333;
 }
 
 .tile {
     float: left;
     border: 1px solid #FFF;
+    font-size: 2.5em;
+    font-family: Helvetica, Arial, sans-serif;
+    text-align: center;
+    color: #eee;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 .tile10 {
-    width: 48px;
-    height: 48px;
+    width: 10%;
+    height: 10%;
 }
 
 .hidden {
@@ -21,14 +35,16 @@
 
 .open {
     background: #7f7f7f;
-    color: #eee;
-    font-size: 2.5em;
-    font-family: Helvetica, Arial, sans-serif;
-    text-align: center;
 }
-#new.open {
+
+#ui .button {
+    float: left;
+}
+
+#new {
     background: #333;
 }
-#checkWin.open {
+
+#checkWin {
     background: #6f6f6f;
 }

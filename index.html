@@ -10,9 +10,9 @@
         <link href="minesweeper.css" rel="stylesheet" />
     </head>
     <body>
-        <div class="tile">
-            <div id="new" class="tile10 open" onclick="newGame();">N</div>
-            <div id="checkWin" class="tile10 open" onclick="checkWin(matrix, rMatrix);">:|</div>
+        <div id="ui">
+            <div id="new" class="button tile tile10" onclick="newGame();">N</div>
+            <div id="checkWin" class="button tile tile10" onclick="checkWin(matrix, rMatrix);">:|</div>
         </div>
         <div id="game"></div>
         <script type="text/javascript" src="jquery.min.js"></script>
