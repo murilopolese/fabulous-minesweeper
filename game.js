@@ -1,7 +1,7 @@
 // Enable cheat
 var matrix;
 var rMatrix;
-var boardSize = 10;
+var boardSize = 8;
 var amountOfBombs = 10;
 $(document).ready(function() {
     console.log('Choose your weapons.');

@@ -2,32 +2,38 @@ html, body, #game {
     width: 100%;
     height: 100%;
 }
+
 #game, #ui {
     clear: both;
-    max-width: 400px;
-    max-height: 400px;
 }
 
 #game {
     background: #333;
+    width: 400px;
+    height: 400px;
 }
 
+/*TILE BASIC*/
+
 .tile {
-    float: left;
     border: 1px solid #FFF;
-    font-size: 1.9em;
+    color: #eee;
+    float: left;
+    font-size: 2.5em;
     font-family: Helvetica, Arial, sans-serif;
     text-align: center;
-    color: #eee;
+    /*INNER BORDER*/
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
 }
 
 .tile10 {
-    width: 10%;
-    height: 10%;
+    width: 50px;
+    height: 50px;
 }
+
+/*TILE STATES*/
 
 .hidden {
     background: #f4cc03;
@@ -36,6 +42,8 @@ html, body, #game {
 .open {
     background: #7f7f7f;
 }
+
+/*INTERFACE*/
 
 #ui .button {
     float: left;
