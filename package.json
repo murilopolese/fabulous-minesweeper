@@ -1,0 +1,16 @@
+{
+  "name": "minesweeper",
+  "version": "1.0.0",
+  "main": "minesweeper3.js",
+  "scripts": {
+    "test": "mocha",
+    "build": "browserify minesweeper.js -o dist.js",
+    "watch": "watchify minesweeper.js -o dist.js"
+  },
+  "devDependencies": {
+    "browserify": "^16.5.0",
+    "chai": "^4.2.0",
+    "mocha": "^7.0.1",
+    "watchify": "^3.11.1"
+  }
+}

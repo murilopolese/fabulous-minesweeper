@@ -1,230 +1,101 @@
-(function() {
-    var game = {};
+const game = require('./minesweeper_lib')
 
-    // global on the server, window in the browser
-    var root, previous_game;
+const renderHiddenTile = function(x, y) {
+	return `<div class="tile hidden"></div>`
+}
+const renderTile = function(value, x, y) {
+	switch (value) {
+		case 'hidden':
+			return `<div class="tile hidden" onclick="handleClick(${x}, ${y})"></div>`
+		case 'bomb':
+			return `<div class="tile bomb"></div>`
+		case 0:
+			return `<div class="tile"></div>`
+		default:
+			return `<div class="tile">${value}</div>`
+	}
+}
+const renderRow = function(row, y) {
+	return row.map((value, x) => `<div class="row">${renderTile(value, x, y)}</div>`).join('')
+}
+const renderBoard = function(board) {
+	return board.map((row, y) => `<div class="board">${renderRow(row, y)}</div>`).join('')
+}
 
-    root = this;
-    if (root != null) {
-      previous_game = root.game;
-    }
+window.onload = function() {
+	let gameEl = document.querySelector('#game')
+	let width = 10
+	let height = 10
+	let bombs = 10
+	let board, hiddenBoard
 
-    // GAME PROPERTIES
-    game.bomb = 'b';
-    game.hidden = 'h';
-    
-    // MATRIX OPERATIONS
-    game.createMatrix = function(w, h, initValue) {
-        if(initValue == undefined) {
-            initValue = 0;
-        }
-        var matrix = new Array(w);
-        for(var x = 0; x < w; x++) {
-            matrix[x] = new Array(h);
-            for(var y = 0; y < h; y++) {
-                matrix[x][y] = initValue;
-            }
-        }
-        return matrix;
-    };
-    game.verifyInsideMatrix = function(matrix, x, y) {
-        if(x >=0 && x <= matrix.length-1
-            && y >= 0 && y <= matrix[0].length-1) {
-            return true;
-        }
-        return false;
-    };
-    game.verifySpaceAround = function(matrix, x, y) {
-        if( this.verifySpaceAbove(matrix, y)  
-            && this.verifySpaceBelow(matrix, y) 
-            && this.verifySpaceRight(matrix, x) 
-            && this.verifySpaceLeft(matrix, x)
-            ) {
-            return true;
-        }
-        return false;
-    };
-    game.putBomb = function(matrix, x, y) {
-        if(this.verifyInsideMatrix(matrix, x, y)) {
-            matrix[x][y] = this.bomb;
-        }
-        return matrix;
-    };
-    game.verifySpaceAbove = function(matrix, y) {
-        if(y > 0) {
-            return true;
-        }
-        return false;
-    };
-    game.verifySpaceBelow = function(matrix, y) {
-        if(matrix[0] != undefined &&
-            y < matrix[0].length-1) {
-            return true;
-        }
-        return false;
-    };
-    game.verifySpaceRight = function(matrix, x) {
-        if(x < matrix.length-1) {
-            return true;
-        }
-        return false;
-    };
-    game.verifySpaceLeft = function(matrix, x, y) {
-        if(x > 0) {
-            return true;
-        }
-        return false;
-    };
-    game.checkBomb = function(tile) {
-        return tile == this.bomb;
-    };
-    game.bombCounter = function(matrix, x, y) {
-        if(this.verifySpaceAbove(matrix, y)
-            && !this.checkBomb(matrix[x][y-1])
-            ) {
-            // Add countar above
-            matrix[x][y-1]++;
-        }
-        if(this.verifySpaceLeft(matrix, x)
-            && !this.checkBomb(matrix[x-1][y]) 
-            ) {
-            // Add counter left
-            matrix[x-1][y]++;
-        }
-        if(this.verifySpaceRight(matrix, x)
-            && !this.checkBomb(matrix[x+1][y])
-            ) {
-            // Add counter right
-            matrix[x+1][y]++;
-        }
-        if(this.verifySpaceBelow(matrix, y)
-            && !this.checkBomb(matrix[x][y+1])
-            ) {
-            // Add counter below
-            matrix[x][y+1]++;
-        }
-        if(this.verifySpaceAbove(matrix, y)
-            && this.verifySpaceLeft(matrix, x)
-            && !this.checkBomb(matrix[x-1][y-1])
-            ) {
-            // Add countar above and left
-            matrix[x-1][y-1]++;
-        }
-        if(this.verifySpaceAbove(matrix, y)
-            && this.verifySpaceRight(matrix, x)
-            && !this.checkBomb(matrix[x+1][y-1])
-            ) {
-            // Add countar above and right
-            matrix[x+1][y-1]++;
-        }
-        if(this.verifySpaceBelow(matrix, y)
-            && this.verifySpaceLeft(matrix, x)
-            && !this.checkBomb(matrix[x-1][y+1])
-            ) {
-            // Add countar below and left
-            matrix[x-1][y+1]++;
-        }
+	const newBoard = function(width, height, bombs) {
+		let board = game.create2DArray(width, height, 0)
+		board = game.placeBombs(board, bombs)
+		board = game.countBombs(board)
+		return board
+	}
+	const uncover = function(hiddenBoard, board, x, y) {
+		if (
+			!game.isOutsideLimits(hiddenBoard, x, y)
+			&& hiddenBoard[y][x] === 'hidden'
+		) {
+			hiddenBoard[y][x] = board[y][x]
+			if (hiddenBoard[y][x] === 0) {
+				hiddenBoard = uncover(hiddenBoard, board, x-1, y-1)
+				hiddenBoard = uncover(hiddenBoard, board, x, y-1)
+				hiddenBoard = uncover(hiddenBoard, board, x+1, y-1)
 
-        if(this.verifySpaceBelow(matrix, y)
-            && this.verifySpaceRight(matrix, x)
-            && !this.checkBomb(matrix[x+1][y+1])
-            ) {
-            // Add countar below and right
-            matrix[x+1][y+1]++;
-        }
-        return matrix;
-    };
-    game.putRandomBombs = function(matrix, n) {
-        var bombsLeft = n;
-        while(bombsLeft > 0) {
-            result = this.putRandomBomb(matrix, bombsLeft);
-            bombsLeft = result.bombsLeft;
-            matrix = result.matrix;
-        }
-        return matrix;
-    };
-    // This function will return how many bombs are left 
-    // and the modified matrix
-    game.putRandomBomb = function(matrix, nBombs) {
-        // Generate random cordinates
-        var rX = parseInt(Math.random()*matrix.length);
-        var rY = parseInt(Math.random()*matrix[0].length);
-        if(!this.checkBomb(matrix[rX][rY])) {
-            matrix = this.putBomb(matrix, rX, rY);
-            matrix = this.bombCounter(matrix, rX, rY);
-            nBombs--;
-            return {
-                bombsLeft: nBombs, 
-                matrix: matrix
-            };
-        } else {
-            return this.putRandomBomb(matrix, nBombs);
-        }
-    };
-    
-    // GAME OPERATIONS
-    game.openTile = function(matrix, rMatrix, x, y) {
-        if(this.verifyInsideMatrix(matrix, x, y)
-            && rMatrix[x][y] == game.hidden) {
-            // Reveal tile
-            rMatrix[x][y] = matrix[x][y];
-            // If is not 0, just reveal it
-            if(matrix[x][y] != 0) {
-                return rMatrix;
-            } else {
-                return this.openTilesAround(matrix, rMatrix, x, y);
-            }
+				hiddenBoard = uncover(hiddenBoard, board, x-1, y)
+				hiddenBoard = uncover(hiddenBoard, board, x+1, y)
 
-        } 
-        return rMatrix;
-    };
-    game.openTilesAround = function(matrix, rMatrix, x, y) {
-        // Open above
-        rMatrix = this.openTile(matrix, rMatrix, x, y-1);
-        // Open below
-        rMatrix = this.openTile(matrix, rMatrix, x, y+1);
-        // Open above and left
-        rMatrix = this.openTile(matrix, rMatrix, x-1, y-1);
-        // Open above and right
-        rMatrix = this.openTile(matrix, rMatrix, x+1, y-1);
-        // Open left
-        rMatrix = this.openTile(matrix, rMatrix, x-1, y);
-        // Open right
-        rMatrix = this.openTile(matrix, rMatrix, x+1, y);
-        // Open below and left
-        rMatrix = this.openTile(matrix, rMatrix, x-1, y+1);
-        // Open below and right
-        rMatrix = this.openTile(matrix, rMatrix, x+1, y+1);
-        return rMatrix;
-    };
+				hiddenBoard = uncover(hiddenBoard, board, x-1, y+1)
+				hiddenBoard = uncover(hiddenBoard, board, x, y+1)
+				hiddenBoard = uncover(hiddenBoard, board, x+1, y+1)
+			}
+		}
+		return game.cloneArray(hiddenBoard)
+	}
+	const gameStatus = function() {
+		let hiddenTiles = 0
+		let hiddenBombs = 0
+		for (let y in hiddenBoard) {
+			for (let x in hiddenBoard[y]) {
+				if (hiddenBoard[y][x] === 'hidden') {
+					hiddenTiles += 1
+					if (board[y][x] === 'bomb') {
+						hiddenBombs += 1
+					}
+				} else if (hiddenBoard[y][x] === 'bomb') {
+					return ':('
+				}
+			}
+		}
+		if (hiddenBombs === hiddenTiles) {
+			return ':D'
+		}
+		return ':|'
+	}
+	const render = function(board) {
+		gameEl.innerHTML = `
+			<div>
+				<button onclick="reset()">${gameStatus(board)}</button>
+			</div>
+			${renderBoard(board)}
+		`
+	}
+	const reset = function() {
+		board = newBoard(width, height, bombs)
+		hiddenBoard = game.create2DArray(width, height, 'hidden')
+		render(hiddenBoard)
+	}
+	const handleClick = function(x, y) {
+		hiddenBoard = uncover(hiddenBoard, board, x, y)
+		render(hiddenBoard)
+	}
 
-    game.checkWin = function(matrix, rMatrix) {
-        for(var x = 0; x < matrix.length; x++) {
-            for(var y = 0; y < matrix[0].length; y++) {
-                if(rMatrix[x][y] == this.bomb) {
-                    return false;
-                }
-                if(rMatrix[x][y] == this.hidden
-                    && matrix[x][y] != this.bomb) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+	window.handleClick = handleClick
+	window.reset = reset
 
-    // AMD / RequireJS
-    if (typeof define !== 'undefined' && define.amd) {
-        define([], function () {
-            return async;
-        });
-    }
-    // Node.js
-    else if (typeof module !== 'undefined' && module.exports) {
-        module.exports = game;
-    }
-    // included directly via <script> tag
-    else {
-        root.game = game;
-    }
-}());
+	reset()
+}
