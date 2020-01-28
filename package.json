@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "minesweeper3.js",
   "scripts": {
+    "start": "http-server",
     "test": "mocha",
     "build": "browserify minesweeper.js -o dist.js",
     "watch": "watchify minesweeper.js -o dist.js"

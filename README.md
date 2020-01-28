@@ -8,7 +8,7 @@ From [Wikipedia](https://en.wikipedia.org/wiki/Minesweeper_(video_game)):
 
 ## Playing
 
-Start a web server on the root of this repository and navigate to `minesweeper.html` or simply double click the file. I have a special appreciation opening html documents from the filesystem.
+Start a web server on the root of this repository and navigate to the server address or simply double click the `index.html` file. I have a special appreciation opening html documents from the filesystem.
 
 ## Testing
 
